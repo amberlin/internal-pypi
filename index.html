@@ -9,9 +9,11 @@
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&amp;display=swap" rel="stylesheet" type="text/css"/>
   <!-- JQuery -->
-  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="https://code.jquery.com/jquery-latest.min.js">
+  </script>
   <!-- Our JS -->
-  <script type="text/javascript" src="pypi_checker.js"></script>
+  <script src="pypi_checker.js" type="text/javascript">
+  </script>
   <!-- Favicon -->
   <link href="https://gist.githubusercontent.com/astariul/c09af596e802e945d3032774e10e1047/raw/f693a2e2b65966494da082887bc4be2917f615e4/random_icon.svg" rel="icon"/>
   <style>
@@ -135,9 +137,21 @@
      A simulator for electrical components
     </span>
    </a>
+   <a class="card" href="hyalus/">
+    hyalus
+    <span>
+    </span>
+    <span class="version">
+     0.1.0-5
+    </span>
+    <br/>
+    <span class="description">
+     Software Testing Tool
+    </span>
+   </a>
   </div>
   <script>
-    $(document).ready(function(){
+   $(document).ready(function(){
       for (let lnk of document.getElementsByTagName('a')) {
         var content = lnk.textContent.trim().replace(/\s\s+/g, ' ').split(" ");
         var pkg_name = content[0];
