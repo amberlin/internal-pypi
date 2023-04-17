@@ -82,7 +82,7 @@ def update(pkg_name, version, link):
         index.write(soup.prettify("utf-8"))
 
     # Change the package page
-    index_file = os.path.join(norm_pkg_name, INDEX_FILE) 
+    index_file = os.path.join(norm_pkg_name, INDEX_FILE)
     with open(index_file) as html_file:
         soup = BeautifulSoup(html_file, "html.parser")
 
@@ -95,7 +95,7 @@ def update(pkg_name, version, link):
     last_anchor.insert_after(new_anchor)
 
     # Change the latest version
-    soup.html.body.div.section.find_all('span')[1].contents[0].replace_with(version) 
+    soup.html.body.div.section.find_all('span')[1].contents[0].replace_with(version)
 
     # Save it
     with open(index_file, 'wb') as index:
