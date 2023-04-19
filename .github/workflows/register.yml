@@ -3,7 +3,7 @@ name: register
 on:
   workflow_dispatch:
     inputs:
-      package_name:
+      package-name:
         description: Package name
         required: true
         type: string
@@ -15,11 +15,11 @@ on:
         description: Author(s) of the package
         required: true
         type: string
-      short_desc:
+      short-desc:
         description: A short description of the package
         required: true
         type: string
-      long_desc:
+      long-desc:
         description: A longer description of the package (HTML)
         required: true
         type: string
@@ -33,37 +33,31 @@ on:
         type: string
 
 jobs:
-  update:
+  register:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8]
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Run Action
+        requirements-txt: requirements.txt
+    - name: Register Package
       env:
         PKG_ACTION: REGISTER
-        PKG_NAME: ${{ inputs.package_name }}
+        PKG_NAME: ${{ inputs.package-name }}
         PKG_VERSION: ${{ inputs.version }}
         PKG_AUTHOR: ${{ inputs.author }}
-        PKG_SHORT_DESC: ${{ inputs.short_desc }}
-        PKG_LONG_DESC: ${{ inputs.long_desc }}
+        PKG_SHORT_DESC: ${{ inputs.short-desc }}
+        PKG_LONG_DESC: ${{ inputs.long-desc }}
         PKG_HOMEPAGE: ${{ inputs.homepage }}
         PKG_LINK: ${{ inputs.link }}
-      run: |
-        pip install beautifulsoup4
-        python .github/actions.py
+      run: python .github/actions.py
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
+      uses: peter-evans/create-pull-request@v5
       with:
-        commit-message: ':package: [:robot:] Register package in PyPi index'
-        title: '[🤖] Register `${{ inputs.package_name }}` in PyPi index'
-        body: Automatically generated PR, registering `${{ inputs.package_name }}` in PyPi
-          index.
+        commit-message: '📦 [🤖] Register ${{ inputs.package-name }} in PyPI index'
+        title: '[🤖] Register `${{ inputs.package-name }}` in PyPI index, with version ${{ inputs.version }}'
+        body: Automatically generated PR, registering `${{ inputs.package-name }}` in PyPI
+          index with version ${{ inputs.version }}.
         branch-suffix: random
         delete-branch: true

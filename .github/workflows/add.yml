@@ -1,4 +1,5 @@
-name: update
+# Adds a new version for a specified package
+name: add
 
 on:
   workflow_dispatch:
@@ -17,7 +18,7 @@ on:
         type: string
 
 jobs:
-  update:
+  add:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -25,9 +26,9 @@ jobs:
       uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
       with:
         requirements-txt: requirements.txt
-    - name: Update Existing Package Version
+    - name: Add New Package Version
       env:
-        PKG_ACTION: UPDATE
+        PKG_ACTION: ADD
         PKG_NAME: ${{ inputs.package-name }}
         PKG_VERSION: ${{ inputs.version }}
         PKG_LINK: ${{ inputs.link }}
@@ -35,9 +36,9 @@ jobs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5
       with:
-        commit-message: '📦 [🤖] Update link for package version in PyPI index'
-        title: '[🤖] Update `${{ inputs.package-name }}==${{ inputs.version }}` in PyPI index'
-        body: Automatically generated PR, updating `${{ inputs.package-name }}` version ${{ inputs.version }} in PyPI
-          index to point to new link `${{ inputs.link }}`.
+        commit-message: '📦 [🤖] Add new package version in PyPI index'
+        title: '[🤖] Add `${{ inputs.package-name }}==${{ inputs.version }}` to PyPI index'
+        body: Automatically generated PR, adding `${{ inputs.package-name }}` version
+          ${{ inputs.version }} in PyPI index.
         branch-suffix: random
         delete-branch: true

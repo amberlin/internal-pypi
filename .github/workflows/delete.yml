@@ -3,7 +3,7 @@ name: delete
 on:
   workflow_dispatch:
     inputs:
-      package_name:
+      package-name:
         description: Package name
         required: true
         type: string
@@ -11,29 +11,23 @@ on:
 jobs:
   delete:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8]
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Run Action
+        requirements-txt: requirements.txt
+    - name: Delete Package
       env:
         PKG_ACTION: DELETE
-        PKG_NAME: ${{ inputs.package_name }}
-      run: |
-        pip install beautifulsoup4
-        python .github/actions.py 
+        PKG_NAME: ${{ inputs.package-name }}
+      run: python .github/actions.py
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
+      uses: peter-evans/create-pull-request@v5
       with:
-        commit-message: ':package: [:robot:] Delete package from PyPi index'
-        title: '[🤖] Delete `${{ inputs.package_name }}` from PyPi index'
-        body: Automatically generated PR, deleting `${{ inputs.package_name }}` from
-          PyPi index.
+        commit-message: '📦 [🤖] Delete ${{ inputs.package-name }} from PyPI index'
+        title: '[🤖] Delete `${{ inputs.package-name }}` from PyPI index'
+        body: Automatically generated PR, deleting `${{ inputs.package-name }}` from
+          PyPI index.
         branch-suffix: random
         delete-branch: true
