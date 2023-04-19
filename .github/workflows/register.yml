@@ -11,10 +11,6 @@ on:
         description: Version of the *python* package, NOT necessarily the git tag
         required: true
         type: string
-      author:
-        description: Author(s) of the package
-        required: true
-        type: string
       short-desc:
         description: A short description of the package
         required: true
@@ -46,7 +42,6 @@ jobs:
         PKG_ACTION: REGISTER
         PKG_NAME: ${{ inputs.package-name }}
         PKG_VERSION: ${{ inputs.version }}
-        PKG_AUTHOR: ${{ inputs.author }}
         PKG_SHORT_DESC: ${{ inputs.short-desc }}
         PKG_LONG_DESC: ${{ inputs.long-desc }}
         PKG_HOMEPAGE: ${{ inputs.homepage }}
