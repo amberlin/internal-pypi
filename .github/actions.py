@@ -37,7 +37,7 @@ def package_exists(soup: BeautifulSoup, pkg_name: str) -> bool:
 
 def register(pkg_name: str, version: str, short_desc: str, long_desc: str, homepage: str, link: str) -> None:
     # Read the root-level index.html into a BeautifulSoup object
-    with open(INDEX_FILE, encoding="utf8") as html_file:
+    with open(INDEX_FILE, 'r', encoding="utf8") as html_file:
         soup = BeautifulSoup(html_file, "html.parser")
 
     norm_pkg_name = normalize(pkg_name)
@@ -60,7 +60,7 @@ def register(pkg_name: str, version: str, short_desc: str, long_desc: str, homep
 
     # Add it to our index and save it
     last_anchor.insert_after(new_anchor)
-    with open(INDEX_FILE, 'w', encoding="utf-8") as index:
+    with open(INDEX_FILE, "wb") as index:
         index.write(soup.prettify("utf-8"))
 
     # Then get the template, replace the content and write to the right place
@@ -112,7 +112,7 @@ def add(pkg_name: str, version: str, link: str) -> None:
     soup.html.body.div.section.find_all('span')[1].contents[0].replace_with(version)
 
     # Save it
-    with open(index_file, 'wb') as index:
+    with open(index_file, "wb") as index:
         index.write(soup.prettify("utf-8"))
 
 def update(pkg_name, version, link):
@@ -134,7 +134,7 @@ def delete(pkg_name):
     # Find and remove the anchor corresponding to our package
     anchor = soup.find('a', attrs={"href": f"{norm_pkg_name}/"})
     anchor.extract()
-    with open(INDEX_FILE, 'w', encoding="utf-8") as index:
+    with open(INDEX_FILE, "wb") as index:
         index.write(soup.prettify("utf-8"))
 
 
