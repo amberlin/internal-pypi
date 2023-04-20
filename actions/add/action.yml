@@ -1,5 +1,7 @@
 name: add
 description: Adds a new version for a specified pre-existing package
+# If called via workflow_dispatch, a PR will be opened.
+# If called via push to default branch of repo, a new commit will be pushed to *this* repository with the new version.
 
 inputs:
   package-name:
@@ -11,11 +13,21 @@ inputs:
   link:
     description: Link used for `pip`. For example, hyalus==0.1.0 could be git+https://github.com/genapsysinc/hyalus@0.1.0-1
     required: true
+  token:
+    description: Token to checkout internal-pypi and open a PR/push a commit
+    required: true
 
 runs:
   using: composite
   steps:
     - uses: actions/checkout@v3
+      with:
+        repository: genapsysinc/internal-pypi
+        path: internal-pypi
+        ref: main
+        token: ${{ inputs.token }}
+    - run: cd internal-pypi
+      shell: bash
     - name: Set up Python
       uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
       with:
@@ -40,10 +52,11 @@ runs:
         branch-suffix: random
         delete-branch: true
     - name: Push Commit
-      if: ${{ github.event_name == 'workflow_call' }}
+      if: ${{ github.event_name == 'push' && github.ref_name == github.event.repository.default_branch }}
       uses: EndBug/add-and-commit@v9
       with:
         add: .
         default_author: github_actions
         message: GitHub Actions - Add ${{ inputs.package-name }} version ${{ inputs.version }}
         push: true
+
