@@ -60,13 +60,7 @@ class ActionInputs:
 
     def pkg_version_exists(self, pkg_soup: BeautifulSoup) -> bool:
         egg = f"#egg={self.norm_pkg_name}-{self.version}"
-        anchors = pkg_soup.find_all('a')
-
-        for anchor in anchors:
-            if anchor["href"].endswith(egg):
-                return True
-
-        return False
+        return bool(pkg_soup.find_all('a', href=re.compile(egg)))
 
 
 def _add_pkg_to_root(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
