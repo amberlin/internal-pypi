@@ -36,7 +36,7 @@ jobs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5
       with:
-        name: add-pkg-version
+        branch: add-pkg-version
         commit-message: '📦 [🤖] Add new package version in PyPI index'
         title: '[🤖] Add `${{ inputs.package-name }}==${{ inputs.version }}` to PyPI index'
         body: Automatically generated PR, adding `${{ inputs.package-name }}` version

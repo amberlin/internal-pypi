@@ -51,7 +51,7 @@ jobs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5
       with:
-        name: register-pkg
+        branch: register-pkg
         commit-message: '📦 [🤖] Register ${{ inputs.package-name }} in PyPI index'
         title: '[🤖] Register `${{ inputs.package-name }}` in PyPI index, with version ${{ inputs.version }}'
         body: Automatically generated PR, registering `${{ inputs.package-name }}` in PyPI

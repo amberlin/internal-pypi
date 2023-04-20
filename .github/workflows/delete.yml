@@ -26,7 +26,7 @@ jobs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5
       with:
-        name: delete-pkg
+        branch: delete-pkg
         commit-message: '📦 [🤖] Delete ${{ inputs.package-name }} from PyPI index'
         title: '[🤖] Delete `${{ inputs.package-name }}` from PyPI index'
         body: Automatically generated PR, deleting `${{ inputs.package-name }}` from
