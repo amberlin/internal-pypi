@@ -101,7 +101,7 @@ def register(inputs: ActionInputs) -> None:
     template = template.replace("_homepage", inputs.homepage)
     template = template.replace("_long_description", inputs.long_desc)
 
-    os.mkdir(inputs.pkg_index)
+    os.mkdir(inputs.norm_pkg_name)
     with open(inputs.pkg_index, "w", encoding="utf-8") as f:
         f.write(template)
 
