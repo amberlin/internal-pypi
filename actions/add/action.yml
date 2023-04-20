@@ -20,28 +20,12 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout calling repo
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
     - uses: actions/checkout@v3
       with:
         repository: genapsysinc/internal-pypi
         path: internal-pypi
         ref: main
         token: ${{ inputs.token }}
-    - run: cd internal-pypi
-      shell: bash
-    - run: pwd
-      shell: bash
-    - run: ls
-      shell: bash
-    - run: cd .github
-      shell: bash
-    - run: pwd
-      shell: bash
-    - run: cd ..
-      shell: bash
     - name: Set up Python
       uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
       with:
