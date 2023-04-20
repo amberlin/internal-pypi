@@ -64,23 +64,21 @@
  <body>
   <div class="container">
    <section class="header">
-    mypackage
+    hyalus
     <span>
     </span>
     <span class="version" id="latest-version">
-     1.1.0
+     0.1.0
     </span>
    </section>
-   <pre hidden="" id="installdanger"><button class="danger-button" disabled="">DANGER ! A higher version of <i>mypackage</i> already exists on PyPI</button></pre>
-   <pre id="installcmd"><code>pip install mypackage --extra-index-url https://genapsysinc.github.io/internal-pypi/</code></pre>
-   <a href="git+https://github.com/GenapsysInc/test-py-package@1.0.0-1#egg=mypackage-1.0.0">
-   </a>
-   <a href="git+https://github.com/GenapsysInc/test-py-package@1.1.0-1#egg=mypackage-1.1.0">
+   <pre hidden="" id="installdanger"><button class="danger-button" disabled="">DANGER ! A higher version of <i>hyalus</i> already exists on PyPI</button></pre>
+   <pre id="installcmd"><code>pip install hyalus --index-url https://genapsysinc.github.io/internal-pypi --extra-index-url https://pypi.org/simple</code></pre>
+   <a href="git+https://github.com/GenapsysInc/hyalus@0.1.0-7#egg=hyalus-0.1.0">
    </a>
    <hr/>
    <div class="row">
     <div class="three columns">
-     <button onclick="location.href='https://github.com/GenapsysInc/test-py-package'">
+     <button onclick="location.href='https://github.com/GenapsysInc/hyalus'">
       GitHub Homepage
      </button>
     </div>
@@ -89,7 +87,11 @@
       Description
      </h6>
      <p>
-      testing again yeehaw
+      Hyalus is a testing tool for software verification, designed as a standalone tool as well as a tool that integrates with
+      <a href="https://docs.pytest.org/en/7.2.x/">
+       pytest
+      </a>
+      .
      </p>
     </div>
    </div>
@@ -102,7 +104,7 @@
 
    $(document).ready(function(){
      var this_vers = document.getElementById('latest-version').textContent.trim();
-     check_supply_chain_attack("mypackage", this_vers, warn_unsafe);
+     check_supply_chain_attack("hyalus", this_vers, warn_unsafe);
    });
   </script>
  </body>
