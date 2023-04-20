@@ -21,25 +21,25 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
-      with:
-        requirements-txt: requirements.txt
-    - name: Update Existing Package Version
-      env:
-        PKG_ACTION: UPDATE
-        PKG_NAME: ${{ inputs.package-name }}
-        PKG_VERSION: ${{ inputs.version }}
-        PKG_LINK: ${{ inputs.link }}
-      run: python .github/actions.py
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
-      with:
-        branch: update-pkg-version
-        commit-message: '📦 [🤖] Update link for package version in PyPI index'
-        title: '[🤖] Update `${{ inputs.package-name }}==${{ inputs.version }}` in PyPI index'
-        body: Automatically generated PR, updating `${{ inputs.package-name }}` version ${{ inputs.version }} in PyPI
-          index to point to new link `${{ inputs.link }}`.
-        branch-suffix: random
-        delete-branch: true
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
+        with:
+          requirements-txt: requirements.txt
+      - name: Update Existing Package Version
+        env:
+          PKG_ACTION: UPDATE
+          PKG_NAME: ${{ inputs.package-name }}
+          PKG_VERSION: ${{ inputs.version }}
+          PKG_LINK: ${{ inputs.link }}
+        run: python .github/actions.py
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: update-pkg-version
+          commit-message: '📦 [🤖] Update link for package version in PyPI index'
+          title: '[🤖] Update `${{ inputs.package-name }}==${{ inputs.version }}` in PyPI index'
+          body: Automatically generated PR, updating `${{ inputs.package-name }}` version ${{ inputs.version }} in PyPI
+            index to point to new link `${{ inputs.link }}`.
+          branch-suffix: random
+          delete-branch: true

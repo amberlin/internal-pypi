@@ -33,28 +33,28 @@ jobs:
   register:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
-      with:
-        requirements-txt: requirements.txt
-    - name: Register Package
-      env:
-        PKG_ACTION: REGISTER
-        PKG_NAME: ${{ inputs.package-name }}
-        PKG_VERSION: ${{ inputs.version }}
-        PKG_SHORT_DESC: ${{ inputs.short-desc }}
-        PKG_LONG_DESC: ${{ inputs.long-desc }}
-        PKG_HOMEPAGE: ${{ inputs.homepage }}
-        PKG_LINK: ${{ inputs.link }}
-      run: python .github/actions.py
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
-      with:
-        branch: register-pkg
-        commit-message: '📦 [🤖] Register ${{ inputs.package-name }} in PyPI index'
-        title: '[🤖] Register `${{ inputs.package-name }}` in PyPI index, with version ${{ inputs.version }}'
-        body: Automatically generated PR, registering `${{ inputs.package-name }}` in PyPI
-          index with version ${{ inputs.version }}.
-        branch-suffix: random
-        delete-branch: true
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
+        with:
+          requirements-txt: requirements.txt
+      - name: Register Package
+        env:
+          PKG_ACTION: REGISTER
+          PKG_NAME: ${{ inputs.package-name }}
+          PKG_VERSION: ${{ inputs.version }}
+          PKG_SHORT_DESC: ${{ inputs.short-desc }}
+          PKG_LONG_DESC: ${{ inputs.long-desc }}
+          PKG_HOMEPAGE: ${{ inputs.homepage }}
+          PKG_LINK: ${{ inputs.link }}
+        run: python .github/actions.py
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: register-pkg
+          commit-message: '📦 [🤖] Register ${{ inputs.package-name }} in PyPI index'
+          title: '[🤖] Register `${{ inputs.package-name }}` in PyPI index, with version ${{ inputs.version }}'
+          body: Automatically generated PR, registering `${{ inputs.package-name }}` in PyPI
+            index with version ${{ inputs.version }}.
+          branch-suffix: random
+          delete-branch: true
