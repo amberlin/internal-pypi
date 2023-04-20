@@ -12,9 +12,6 @@ INDEX_FILE = "index.html"
 TEMPLATE_FILE = "pkg_template.html"
 YAML_ACTION_FILES = [".github/workflows/delete.yml", ".github/workflows/update.yml"]
 
-with open(INDEX_FILE, 'r', encoding="utf-8") as root_index:
-    ROOT_SOUP = BeautifulSoup(root_index, "html.parser")
-
 
 def _read_env_var(key: str) -> str|None:
     """Try to get the given key from os.environ, returning None if the key doesn't exist
@@ -64,19 +61,9 @@ def package_exists(soup: BeautifulSoup, pkg_name: str) -> bool:
     return False
 
 
-def _fill_template(template_file: str = TEMPLATE_FILE) -> str:
-    pass
-
-
-def register(inputs: ActionInputs) -> None:
-    # Read the root-level index.html into a BeautifulSoup object
-    if package_exists(ROOT_SOUP, inputs.norm_pkg_name):
-        raise ValueError(f"Package {inputs.norm_pkg_name} already exists")
-
-    # Create a new anchor element for our new package
-
+def _add_pkg_to_root(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
     # Copy the last anchor element
-    last_anchor = ROOT_SOUP.find_all('a')[-1]
+    last_anchor = root_soup.find_all('a')[-1]
     new_anchor = copy.copy(last_anchor)
     new_anchor["href"] = f"{inputs.norm_pkg_name}/"
     new_anchor.contents[0].replace_with(inputs.pkg_name)
@@ -88,12 +75,14 @@ def register(inputs: ActionInputs) -> None:
 
     # Add it to our index and save it
     last_anchor.insert_after(new_anchor)
-    with open(INDEX_FILE, "wb") as index:
-        index.write(ROOT_SOUP.prettify("utf-8"))
 
-    # Then get the template, replace the content and write to the right place
-    with open(TEMPLATE_FILE, encoding="utf-8") as temp_file:
-        template = temp_file.read()
+    with open(INDEX_FILE, "wb") as index:
+        index.write(root_soup.prettify("utf-8"))
+
+
+def _write_template(inputs: ActionInputs, template_file: str = TEMPLATE_FILE) -> None:
+    with open(template_file, encoding="utf-8") as template_fh:
+        template = template_fh.read()
 
     template = template.replace("_package_name", inputs.pkg_name)
     template = template.replace("_version", inputs.version)
@@ -102,71 +91,113 @@ def register(inputs: ActionInputs) -> None:
     template = template.replace("_long_description", inputs.long_desc)
 
     os.mkdir(inputs.norm_pkg_name)
+
     with open(inputs.pkg_index, "w", encoding="utf-8") as f:
         f.write(template)
 
 
-def add(inputs: ActionInputs) -> None:
-    if not package_exists(ROOT_SOUP, inputs.norm_pkg_name):
-        raise ValueError(f"Package {inputs.norm_pkg_name} does not exist")
+def register(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
+    # Read the root-level index.html into a BeautifulSoup object
+    if package_exists(root_soup, inputs.norm_pkg_name):
+        raise ValueError(f"Package {inputs.norm_pkg_name} already exists")
 
-    # Change the version in the main page
-    anchor = ROOT_SOUP.find('a', attrs={"href": f"{inputs.norm_pkg_name}/"})
+    # Create a new anchor element for our new package and add it to the page
+    _add_pkg_to_root(inputs, root_soup)
+
+    # Then get the template, replace the content and write to the right place
+    _write_template(inputs)
+
+
+def _update_root_pkg_version(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
+    # Change the version in the root index
+    anchor = root_soup.find('a', attrs={"href": f"{inputs.norm_pkg_name}/"})
     spans = anchor.find_all("span")
     spans[1].string = inputs.version
+
     with open(INDEX_FILE, "wb") as index:
-        index.write(ROOT_SOUP.prettify("utf-8"))
+        index.write(root_soup.prettify("utf-8"))
 
-    # Change the package page
-    with open(inputs.pkg_index, 'r', encoding="utf-8") as html_file:
-        pkg_soup = BeautifulSoup(html_file, "html.parser")
 
+def _add_new_pkg_version(inputs: ActionInputs, pkg_soup: BeautifulSoup) -> None:
     # Create a new anchor element for our new version using the last anchor element as a baseline
     last_anchor = pkg_soup.find_all('a')[-1]
     new_anchor = copy.copy(last_anchor)
     new_anchor["href"] = f"{inputs.link}#egg={inputs.norm_pkg_name}-{inputs.version}"
 
-    # Add it to our index
+    # Add the new anchor to the end of the list
     last_anchor.insert_after(new_anchor)
 
-    # Change the latest version
+    # Change the latest version to point to the new one
     pkg_soup.html.body.div.section.find_all("span")[1].contents[0].replace_with(inputs.version)
 
-    # Save it
     with open(inputs.pkg_index, "wb") as index:
         index.write(pkg_soup.prettify("utf-8"))
 
-def update(inputs: ActionInputs) -> None:
-    pass
+
+def add(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
+    if not package_exists(root_soup, inputs.norm_pkg_name):
+        raise ValueError(f"Package {inputs.norm_pkg_name} does not exist")
+
+    _update_root_pkg_version(inputs, root_soup)
+
+    with open(inputs.pkg_index, 'r', encoding="utf-8") as html_file:
+        pkg_soup = BeautifulSoup(html_file, "html.parser")
+
+    _add_new_pkg_version(inputs, pkg_soup)
 
 
-def delete(inputs: ActionInputs) -> None:
-    if not package_exists(ROOT_SOUP, inputs.norm_pkg_name):
+def _update_pkg_version(inputs: ActionInputs, pkg_soup: BeautifulSoup) -> None:
+    anchors = pkg_soup.find_all('a')
+
+    for anchor in anchors:
+        if anchor["href"].endswith(f"#egg={inputs.norm_pkg_name}-{inputs.version}"):
+            anchor["href"] = inputs.link
+            break
+
+    with open(inputs.pkg_index, "wb") as index:
+        index.write(pkg_soup.prettify("utf-8"))
+
+
+def update(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
+    if not package_exists(root_soup, inputs.norm_pkg_name):
+        raise ValueError(f"Package {inputs.norm_pkg_name} does not exist")
+
+    with open(inputs.pkg_index, 'r', encoding="utf-8") as html_file:
+        pkg_soup = BeautifulSoup(html_file, "html.parser")
+
+    _update_pkg_version(inputs, pkg_soup)
+
+
+def delete(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
+    if not package_exists(root_soup, inputs.norm_pkg_name):
         raise ValueError(f"Package {inputs.norm_pkg_name} must be registered first")
 
     # Remove the package directory
     shutil.rmtree(inputs.norm_pkg_name)
 
     # Find and remove the anchor corresponding to our package
-    anchor = ROOT_SOUP.find('a', attrs={"href": f"{inputs.norm_pkg_name}/"})
+    anchor = root_soup.find('a', attrs={"href": f"{inputs.norm_pkg_name}/"})
     anchor.extract()
     with open(INDEX_FILE, "wb") as index:
-        index.write(ROOT_SOUP.prettify("utf-8"))
+        index.write(root_soup.prettify("utf-8"))
 
 
 def main():
     # Call the right method, with the right arguments
     action_inputs = ActionInputs()
 
+    with open(INDEX_FILE, 'r', encoding="utf-8") as root_index_fh:
+        root_soup = BeautifulSoup(root_index_fh, "html.parser")
+
     match action_inputs.action:
         case "REGISTER":
-            register(action_inputs)
+            register(action_inputs, root_soup)
         case "ADD":
-            add(action_inputs)
+            add(action_inputs, root_soup)
         case "UPDATE":
-            update(action_inputs)
+            update(action_inputs, root_soup)
         case "DELETE":
-            delete(action_inputs)
+            delete(action_inputs, root_soup)
 
 
 if __name__ == "__main__":
