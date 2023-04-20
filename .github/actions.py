@@ -128,7 +128,7 @@ def _update_root_pkg_version(inputs: ActionInputs, root_soup: BeautifulSoup) -> 
 
 def _add_new_pkg_version(inputs: ActionInputs, pkg_soup: BeautifulSoup) -> None:
     # Create a new anchor element for our new version using the last anchor element as a baseline
-    last_anchor = pkg_soup.find_all('a')[-1]
+    last_anchor = pkg_soup.find_all('a', href=re.compile("#egg"))[-1]
     new_anchor = copy.copy(last_anchor)
     new_anchor["href"] = f"{inputs.link}#egg={inputs.norm_pkg_name}-{inputs.version}"
 
