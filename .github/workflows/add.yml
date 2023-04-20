@@ -36,7 +36,7 @@ jobs:
   add:
     runs-on: ubuntu-latest
     steps:
-      - uses: GenapsysInc/internal-pypy/actions/add@main
+      - uses: GenapsysInc/internal-pypi/actions/add@main
         with:
           package-name: ${{ inputs.package-name }}
           version: ${{ inputs.version }}
