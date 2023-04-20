@@ -2,7 +2,7 @@
 name: add
 
 on:
-  workflow_dispatch:
+  [workflow_dispatch, workflow_call]:
     inputs:
       package-name:
         description: Package name
