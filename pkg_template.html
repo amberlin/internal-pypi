@@ -9,9 +9,11 @@
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&amp;display=swap" rel="stylesheet" type="text/css"/>
   <!-- JQuery -->
-  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="https://code.jquery.com/jquery-latest.min.js">
+  </script>
   <!-- Our JS -->
-  <script type="text/javascript" src="../pypi_checker.js"></script>
+  <script type="text/javascript" src="../pypi_checker.js">
+  </script>
   <!-- Favicon -->
   <link href="https://user-images.githubusercontent.com/14186219/232160108-1f7cb97d-47c9-4ef3-bb83-fd5669c1d47a.png" rel="icon"/>
   <style>
@@ -53,36 +55,36 @@
    PyPI - Sequencing Health
   </title>
  </head>
-  <body>
-   <div class="container">
-    <section class="header">
-     _package_name
-     <span>
-     </span>
-     <span id='latest-version' class="version">
-      _version
-     </span>
-    </section>
-    <pre id='installdanger' hidden><button class="danger-button" disabled>DANGER ! A higher version of <i>_package_name</i> already exists on PyPI</button></pre>
-    <pre id='installcmd'><code>pip install _package_name --extra-index-url https://genapsysinc.github.io/internal-pypi/</code></pre>
-    <a href="_link">
-    </a>
-    <hr/>
-    <div class="row">
-     <div class="three columns">
-      <button onclick="location.href='_homepage'">
-       GitHub Homepage
-      </button>
-     </div>
-    <div class="nine columns">
-     <h6 class="text-header">
-      Description
-     </h6>
-     <p>
-      _long_description
-     </p>
+ <body>
+  <div class="container">
+   <section class="header">
+    _package_name
+    <span>
+    </span>
+    <span id='latest-version' class="version">
+     _version
+    </span>
+   </section>
+   <pre id='installdanger' hidden><button class="danger-button" disabled>DANGER ! A higher version of <i>_package_name</i> already exists on PyPI</button></pre>
+   <pre id='installcmd'><code>pip install _package_name --extra-index-url https://genapsysinc.github.io/internal-pypi/</code></pre>
+   <a href="_link">
+   </a>
+   <hr/>
+   <div class="row">
+    <div class="three columns">
+     <button onclick="location.href='_homepage'">
+      GitHub Homepage
+     </button>
     </div>
+   <div class="nine columns">
+    <h6 class="text-header">
+     Description
+    </h6>
+    <p>
+     _long_description
+    </p>
    </div>
+  </div>
   </div>
   <script>
     function warn_unsafe() {
