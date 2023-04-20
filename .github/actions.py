@@ -46,19 +46,27 @@ class ActionInputs:
     def pkg_index(self) -> Path:
         return Path(self.norm_pkg_name) / INDEX_FILE
 
+    def pkg_exists(self, root_soup: BeautifulSoup) -> bool:
+        """Determine if norm_pkg_name can be found in the given root index.html doc soup
 
-def package_exists(soup: BeautifulSoup, pkg_name: str) -> bool:
-    """Determine if the given package_name can be found in the given HTML doc soup
+        :param root_soup: The BeautifulSoup to search
+        :return: True if the package name exists, else False
+        """
+        package_ref = self.norm_pkg_name + '/'
+        for anchor in root_soup.find_all('a'):
+            if anchor["href"] == package_ref:
+                return True
+        return False
 
-    :param soup: The BeautifulSoup to search
-    :param pkg_name: The package name to search for
-    :return: True if the package name exists, else False
-    """
-    package_ref = pkg_name + '/'
-    for anchor in soup.find_all('a'):
-        if anchor["href"] == package_ref:
-            return True
-    return False
+    def pkg_version_exists(self, pkg_soup: BeautifulSoup) -> bool:
+        egg = f"#egg={self.norm_pkg_name}-{self.version}"
+        anchors = pkg_soup.find_all('a')
+
+        for anchor in anchors:
+            if anchor["href"].endswith(egg):
+                return True
+
+        return False
 
 
 def _add_pkg_to_root(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
@@ -98,7 +106,7 @@ def _write_template(inputs: ActionInputs, template_file: str = TEMPLATE_FILE) ->
 
 def register(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
     # Read the root-level index.html into a BeautifulSoup object
-    if package_exists(root_soup, inputs.norm_pkg_name):
+    if inputs.pkg_exists(root_soup):
         raise ValueError(f"Package {inputs.norm_pkg_name} already exists")
 
     # Create a new anchor element for our new package and add it to the page
@@ -135,13 +143,16 @@ def _add_new_pkg_version(inputs: ActionInputs, pkg_soup: BeautifulSoup) -> None:
 
 
 def add(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
-    if not package_exists(root_soup, inputs.norm_pkg_name):
+    if not inputs.pkg_exists(root_soup):
         raise ValueError(f"Package {inputs.norm_pkg_name} does not exist")
-
-    _update_root_pkg_version(inputs, root_soup)
 
     with open(inputs.pkg_index, 'r', encoding="utf-8") as html_file:
         pkg_soup = BeautifulSoup(html_file, "html.parser")
+
+    if inputs.pkg_version_exists(pkg_soup):
+        raise ValueError(f"Package {inputs.norm_pkg_name} version {inputs.version} already present")
+
+    _update_root_pkg_version(inputs, root_soup)
 
     _add_new_pkg_version(inputs, pkg_soup)
 
@@ -160,7 +171,7 @@ def _update_pkg_version(inputs: ActionInputs, pkg_soup: BeautifulSoup) -> None:
 
 
 def update(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
-    if not package_exists(root_soup, inputs.norm_pkg_name):
+    if not inputs.pkg_exists(root_soup):
         raise ValueError(f"Package {inputs.norm_pkg_name} does not exist")
 
     with open(inputs.pkg_index, 'r', encoding="utf-8") as html_file:
@@ -170,7 +181,7 @@ def update(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
 
 
 def delete(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
-    if not package_exists(root_soup, inputs.norm_pkg_name):
+    if not inputs.pkg_exists(root_soup):
         raise ValueError(f"Package {inputs.norm_pkg_name} must be registered first")
 
     # Remove the package directory
