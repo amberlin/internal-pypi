@@ -36,34 +36,8 @@ jobs:
   add:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
+      - uses: GenapsysInc/internal-pypy/actions/add@main
         with:
-          requirements-txt: requirements.txt
-      - name: Add New Package Version
-        env:
-          PKG_ACTION: ADD
-          PKG_NAME: ${{ inputs.package-name }}
-          PKG_VERSION: ${{ inputs.version }}
-          PKG_LINK: ${{ inputs.link }}
-        run: python .github/actions.py
-      - name: Create Pull Request
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: peter-evans/create-pull-request@v5
-        with:
-          branch: add-pkg-version
-          commit-message: '📦 [🤖] Add new package version in PyPI index'
-          title: '[🤖] Add `${{ inputs.package-name }}==${{ inputs.version }}` to PyPI index'
-          body: Automatically generated PR, adding `${{ inputs.package-name }}` version
-            ${{ inputs.version }} in PyPI index.
-          branch-suffix: random
-          delete-branch: true
-      - name: Push Commit
-        if: ${{ github.event_name == 'workflow_call' }}
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: .
-          default_author: github_actions
-          message: GitHub Actions - Add ${{ inputs.package-name }} version ${{ inputs.version }}
-          push: true
+          package-name: ${{ inputs.package-name }}
+          version: ${{ inputs.version }}
+          link: ${{ inputs.link }}
