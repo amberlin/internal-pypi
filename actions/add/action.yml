@@ -29,16 +29,14 @@ runs:
     - name: Set up Python
       uses: GenapsysInc/internal-actions/reusable-actions/setup-python@main
       with:
-        requirements-txt: requirements.txt
-      working-directory: internal-pypi
+        requirements-txt: internal-pypi/requirements.txt
     - name: Add New Package Version
       env:
         PKG_ACTION: ADD
         PKG_NAME: ${{ inputs.package-name }}
         PKG_VERSION: ${{ inputs.version }}
         PKG_LINK: ${{ inputs.link }}
-      run: python .github/actions.py
-      working-directory: internal-pypi
+      run: cd internal-pypi && python .github/actions.py
       shell: bash
     - name: Create Pull Request
       if: ${{ github.event_name == 'workflow_dispatch' }}
