@@ -6,7 +6,7 @@
   <a href="#Description">Description</a> •
   <a href="#Actions">Actions</a> •
   <a href="#Name-Collisions">Name Collisions</a> •
-  <a href="#Supply-Chain-Attacks">A word about supply chain attacks</a> •
+  <a href="#Supply-Chain-Attacks">Supply Chain Attacks</a> •
   <a href="#References">References</a>
 </p>
 
