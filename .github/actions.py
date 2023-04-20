@@ -147,11 +147,12 @@ def add(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
 
 
 def _update_pkg_version(inputs: ActionInputs, pkg_soup: BeautifulSoup) -> None:
+    egg = f"#egg={inputs.norm_pkg_name}-{inputs.version}"
     anchors = pkg_soup.find_all('a')
 
     for anchor in anchors:
-        if anchor["href"].endswith(f"#egg={inputs.norm_pkg_name}-{inputs.version}"):
-            anchor["href"] = inputs.link
+        if anchor["href"].endswith(egg):
+            anchor["href"] = f"{inputs.link}{egg}"
             break
 
     with open(inputs.pkg_index, "wb") as index:
