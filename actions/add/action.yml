@@ -20,6 +20,10 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Checkout calling repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - uses: actions/checkout@v3
       with:
         repository: genapsysinc/internal-pypi
