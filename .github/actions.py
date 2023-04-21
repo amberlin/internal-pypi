@@ -171,6 +171,9 @@ def update(inputs: ActionInputs, root_soup: BeautifulSoup) -> None:
     with open(inputs.pkg_index, 'r', encoding="utf-8") as html_file:
         pkg_soup = BeautifulSoup(html_file, "html.parser")
 
+    if not inputs.pkg_version_exists(pkg_soup):
+        raise ValueError(f"Package {inputs.norm_pkg_name} version {inputs.version} not found")
+
     _update_pkg_version(inputs, pkg_soup)
 
 

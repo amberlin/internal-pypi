@@ -22,31 +22,37 @@ _Private packages indexed here are kept private: you will need relevant GitHub a
 
 ## Actions
 
-Five GitHub Actions workflows exist in this repository.
-Four of them are triggered via `workflow_dispatch`, and one via `workflow_call`.
-Together, the `workflow_dispatch` workflows let you register or delete packages, add new package versions, or update existing package versions.
+Four GitHub Actions workflows exist in this repository.
+These workflows are all triggered via `workflow_dispatch`.
+Together, these workflows let you register or delete packages, add new package versions, or update existing package versions.
 These workflows do not automatically update the package index, but rather automatically open a pull request with the changes required to update the index.
-The `workflow_call` workflow is intended to automatically add new package versions from a calling repository.
-Before this workflow can be used, the package *must* be manually registered.
+For automatic updating of a *preexisting* package, the `actions/add` action may be used.
+A supporting action exists in the `internal-actions` repository under `reusable-actions/add-to-pypi`, which automatically figures out the package name, package version, and link to use when calling the `actions/add` action.
 
 ### Register
 
 `workflow_dispatch` workflow to register a new package in the index.
+If a package matching the given name already exists, the workflow will exit in error.
 Requires a package name, initial version, short description, long description, GitHub homepage, and installation link.
 
 ### Add
 
 `workflow_dispatch` workflow to add a new version of a package to the index.
+If a package matching the given name is not found, the workflow will exit in error.
+If an entry matching the given version already exists, the workflow will exit in error.
 Requires a package name, new version, and installation link.
 
 ### Update
 
 `workflow_dispatch` workflow to update an existing version of a package in place with a new installation link.
+If a package matching the given name is not found, the workflow will exit in error.
+If an entry matching the given version does not exist, the workflow will exit in error.
 Requires a package name, version, and new installation link.
 
 ### Delete
 
 `workflow_dispatch` workflow to delete a package from the index.
+If a package matching the given name does not exist, the workflow will exist in error.
 Requires a package name.
 
 ### Auto
